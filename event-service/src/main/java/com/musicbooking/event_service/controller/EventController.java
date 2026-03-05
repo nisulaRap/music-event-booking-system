@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.musicbooking.event_service.dto.EventRequest;
 import com.musicbooking.event_service.model.Event;
 import com.musicbooking.event_service.service.EventService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,9 +45,9 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    public Event delete(@PathVariable String id) {
+    public org.springframework.http.ResponseEntity<String> delete(@PathVariable String id) {
         service.deleteEvent(id);
-        return null;
+        return org.springframework.http.ResponseEntity.ok("Deleted Event");
     }
     
     // Integration with Booking Service to reduce available seats
