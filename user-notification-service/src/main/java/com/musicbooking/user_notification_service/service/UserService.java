@@ -14,7 +14,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+   private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
