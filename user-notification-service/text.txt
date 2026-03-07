@@ -1,1 +1,0 @@
-sjajaspring.data.mongodb.uri=mongodb+srv://senudissanayake18_db_user:xl5VXlzrRmo27ntz@user-db.evezku9.mongodb.net/user-db?retryWrites=true&w=majority
