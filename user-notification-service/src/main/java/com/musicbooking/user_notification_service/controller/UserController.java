@@ -2,48 +2,69 @@ package com.musicbooking.user_notification_service.controller;
 
 import com.musicbooking.user_notification_service.model.User;
 import com.musicbooking.user_notification_service.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
+    // ADMIN ONLY - get all users
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers(Authentication authentication) {
+        String userId = authentication.getName();
+        User currentUser = userService.getUserById(userId);
+
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable String id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    // USER/ADMIN - view own profile
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
+        String userId = authentication.getName();
+        User user = userService.getUserById(userId);
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
+        if (user == null) {
             return ResponseEntity.notFound().build();
         }
+
+        return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    // USER/ADMIN - update own profile
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(@RequestBody User updatedUser,
+                                             Authentication authentication) {
+        String userId = authentication.getName();
+        User updated = userService.updateProfileById(userId, updatedUser);
+
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updated);
+    }
+
+    // USER/ADMIN - delete own profile
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyProfile(Authentication authentication) {
+        String userId = authentication.getName();
+        userService.deleteUserById(userId);
+
+        return ResponseEntity.ok(Map.of("message", "Profile deleted successfully"));
     }
 }
