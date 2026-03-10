@@ -1,2 +1,2 @@
-##Username : admin <br>
-##password : password123
+Username : admin
+Password : password123
