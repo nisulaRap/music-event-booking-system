@@ -6,13 +6,13 @@ spring:
     name: payment-service
   data:
     mongodb:
-      uri: mongodb://localhost:27017/payment_db
-      
+      uri: mongodb+srv://ViiHAA:viihaa@cluster0.jwkwnsk.mongodb.net/payment_db?retryWrites=true&w=majority&appName=Cluster0
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-  security:
+security:
     user:
       name: admin
       password: password123
