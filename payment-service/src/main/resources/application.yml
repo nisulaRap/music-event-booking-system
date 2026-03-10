@@ -1,0 +1,18 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: payment-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/payment_db
+      
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+  security:
+    user:
+      name: admin
+      password: password123
