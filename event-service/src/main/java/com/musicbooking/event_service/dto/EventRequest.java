@@ -2,6 +2,7 @@ package com.musicbooking.event_service.dto;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,4 +21,7 @@ public class EventRequest {
 
     @Min(value = 1, message = "Total seats must be at least 1")
     private int totalSeats;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price must be non-negative")
+    private double price;
 }

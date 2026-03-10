@@ -23,6 +23,7 @@ public class EventService {
                 .eventDate(request.getEventDate())
                 .totalSeats(request.getTotalSeats())
                 .availableSeats(request.getTotalSeats())
+                .price(request.getPrice())
                 .build();
         return repository.save(event);
     }
@@ -42,6 +43,7 @@ public class EventService {
         event.setEventDate(request.getEventDate());
         event.setTotalSeats(request.getTotalSeats());
         event.setAvailableSeats(request.getTotalSeats());
+        event.setPrice(request.getPrice());
         return repository.save(event);
     }
 

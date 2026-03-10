@@ -22,6 +22,7 @@ public class Event {
     private LocalDate eventDate;
     private int totalSeats;
     private int availableSeats;
+    private double price;
     
     
     public String getId() {
@@ -70,5 +71,13 @@ public class Event {
 
     public void setAvailableSeats(int availableSeats) {
         this.availableSeats = availableSeats;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }
