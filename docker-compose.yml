@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  # ── Frontend (React + Vite + Nginx) ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - event-service
+    networks:
+      - music-net
+    restart: unless-stopped
+
+  # ── Event Service (Spring Boot) ──────────────────────────────────────────────
+  event-service:
+    build:
+      context: ./event-service
+      dockerfile: Dockerfile
+    container_name: event-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGO_URI}
+    networks:
+      - music-net
+    restart: unless-stopped
+
+networks:
+  music-net:
+    driver: bridge
