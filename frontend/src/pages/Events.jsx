@@ -10,7 +10,7 @@ export default function Events() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('date') // 'date' | 'price' | 'name'
+  const [sort, setSort] = useState('date')
 
   const load = useCallback(async () => {
     setLoading(true)

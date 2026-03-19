@@ -4,8 +4,6 @@ import { MapPin, Calendar, Users, Trash2, Edit3, Music } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { eventService } from '../services/eventService'
 
-// Jackson serialises LocalDate as [2025,6,15] array by default without JavaTimeModule
-// This helper normalises both formats to a readable string
 function formatEventDate(raw) {
   if (!raw) return '—'
   try {
