@@ -29,7 +29,6 @@ export default function EventForm({ eventId }) {
         setForm({
           name: event.name || '',
           location: event.location || '',
-          // eventDate comes back as "2025-06-15" array or string — normalise it
           eventDate: normaliseDate(event.eventDate),
           totalSeats: event.totalSeats?.toString() || '',
           price: event.price?.toString() || '',
@@ -43,14 +42,13 @@ export default function EventForm({ eventId }) {
     })()
   }, [eventId, isEdit, navigate])
 
-  // MongoDB/Jackson can return LocalDate as [2025,6,15] array or "2025-06-15" string
   const normaliseDate = (raw) => {
     if (!raw) return ''
     if (Array.isArray(raw)) {
       const [y, m, d] = raw
       return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`
     }
-    return raw // already "YYYY-MM-DD"
+    return raw
   }
 
   const validate = () => {
@@ -77,12 +75,10 @@ export default function EventForm({ eventId }) {
 
     setLoading(true)
 
-    // Payload must match EventRequest exactly:
-    // name, location, eventDate (YYYY-MM-DD string), totalSeats (int), price (double)
     const payload = {
       name: form.name.trim(),
       location: form.location.trim(),
-      eventDate: form.eventDate,          // already "YYYY-MM-DD" from date input
+      eventDate: form.eventDate,
       totalSeats: Number(form.totalSeats),
       price: Number(form.price),
     }
@@ -97,7 +93,6 @@ export default function EventForm({ eventId }) {
       }
       navigate('/events')
     } catch (err) {
-      // Log full error so you can debug in browser console
       console.error('API error:', err.response?.data || err.message)
       const msg =
         err.response?.data?.message ||
