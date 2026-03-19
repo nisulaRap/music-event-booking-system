@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-  # ── Frontend (React + Vite + Nginx) ─────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -15,7 +14,6 @@ services:
       - music-net
     restart: unless-stopped
 
-  # ── Event Service (Spring Boot) ──────────────────────────────────────────────
   event-service:
     build:
       context: ./event-service
