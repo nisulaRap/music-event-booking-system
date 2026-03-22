@@ -1,0 +1,63 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: booking-service
+
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/booking-db}
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+# -----------------------------------------------------------------------
+# JWT
+# -----------------------------------------------------------------------
+jwt:
+  secret: ${JWT_SECRET:changeme-at-least-32-characters-long!!}
+
+# -----------------------------------------------------------------------
+# Inter-service communication
+# -----------------------------------------------------------------------
+services:
+  notification:
+    url: ${NOTIFICATION_SERVICE_URL:http://localhost:8081}
+  event:
+    url: ${EVENT_SERVICE_URL:http://localhost:8082}
+
+# -----------------------------------------------------------------------
+# Shared API key added by RestTemplate interceptor
+# -----------------------------------------------------------------------
+api:
+  key: ${API_KEY:local-dev-key}
+
+# -----------------------------------------------------------------------
+# Scheduling – seat expiry
+# -----------------------------------------------------------------------
+scheduling:
+  seat-expiry:
+    cron: "0 * * * * *"   # every minute
+
+# -----------------------------------------------------------------------
+# Actuator
+# -----------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# -----------------------------------------------------------------------
+# OpenAPI / Swagger
+# -----------------------------------------------------------------------
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html

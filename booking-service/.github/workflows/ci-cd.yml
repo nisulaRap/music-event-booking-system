@@ -1,0 +1,113 @@
+name: Booking Service – CI/CD
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+env:
+  JAVA_VERSION: "21"
+  ACR_REGISTRY: ${{ secrets.ACR_REGISTRY }}          # e.g. myregistry.azurecr.io
+  IMAGE_NAME: booking-service
+  AZURE_CONTAINER_APP: booking-service-app
+  AZURE_RESOURCE_GROUP: music-booking-rg
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 1 – Build, Test & SonarCloud scan
+  # ──────────────────────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build, Test & SonarCloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Full history required for SonarCloud blame data
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: maven
+
+      - name: Build, test & SonarCloud scan
+        working-directory: booking-service
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # Supply required app properties so the context-load test passes
+          JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
+          MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
+          API_KEY: ci-api-key
+          NOTIFICATION_SERVICE_URL: http://localhost:9999
+          EVENT_SERVICE_URL: http://localhost:9998
+        run: |
+          ./mvnw --no-transfer-progress \
+            verify \
+            sonar:sonar \
+            -Dsonar.projectKey=nisulaRap_music-event-booking-system \
+            -Dsonar.organization=nisulaRap \
+            -Dsonar.host.url=https://sonarcloud.io
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 2 – Docker build & push to Azure Container Registry (main only)
+  # ──────────────────────────────────────────────────────────────────────────
+  docker-build-push:
+    name: Docker Build & Push to ACR
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: booking-service
+          file: booking-service/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 3 – Deploy to Azure Container Apps (main only)
+  # ──────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Azure Container Apps
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
+          containerAppName: ${{ env.AZURE_CONTAINER_APP }}
+          imageToDeploy: ${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          environmentVariables: |
+            SERVER_PORT=8083
+            MONGO_URI=${{ secrets.MONGO_URI }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            API_KEY=${{ secrets.API_KEY }}
+            NOTIFICATION_SERVICE_URL=${{ secrets.NOTIFICATION_SERVICE_URL }}
+            EVENT_SERVICE_URL=${{ secrets.EVENT_SERVICE_URL }}

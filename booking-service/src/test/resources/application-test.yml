@@ -1,0 +1,18 @@
+# Test profile – used by BookingServiceApplicationTests
+# Stays in test resources so prod application.yml is unaffected.
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/booking-test-db
+
+jwt:
+  secret: test-secret-key-that-is-at-least-32-chars-long!!
+
+services:
+  notification:
+    url: http://localhost:9999
+  event:
+    url: http://localhost:9998
+
+api:
+  key: test-api-key
