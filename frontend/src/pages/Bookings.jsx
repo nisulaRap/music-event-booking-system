@@ -116,7 +116,7 @@ export default function Bookings() {
                         </div>
                       </div>
 
-                      {/* Right: price + status + actions */}
+                      {/* price, status and actions */}
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem' }}>
                         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-gold-400)' }}>
                           Rs. {b.totalPrice?.toFixed(2)}
