@@ -15,16 +15,14 @@ export default function Home() {
 
   return (
     <div className="noise-bg">
-      {/* ─── Hero ───────────────────────────────────────────────── */}
+      {/* Hero */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center
                            px-6 overflow-hidden">
-        {/* Ambient glow */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2
                           w-[700px] h-[700px] bg-gold-400/5 rounded-full blur-[120px]" />
           <div className="absolute top-3/4 left-1/4 w-[400px] h-[400px]
                           bg-purple-600/5 rounded-full blur-[100px]" />
-          {/* Decorative lines */}
           <svg className="absolute inset-0 w-full h-full opacity-5" aria-hidden="true">
             <defs>
               <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -95,7 +93,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Features ────────────────────────────────────────────── */}
+      {/* Features */}
       <section className="max-w-6xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="font-display text-4xl font-bold text-white mb-4">
@@ -113,7 +111,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── CTA Banner ─────────────────────────────────────────── */}
+      {/* CTA Banner */}
       <section className="max-w-4xl mx-auto px-6 py-20">
         <div className="card border-gold-400/30 p-10 md:p-16 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-gold-400/5 to-transparent pointer-events-none" />
