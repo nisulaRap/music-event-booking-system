@@ -1,6 +1,7 @@
 services:
 
   frontend:
+    image: nisulapre/frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -18,6 +19,7 @@ services:
     restart: unless-stopped
 
   user-service:
+    image: nisulapre/user-service:latest
     build:
       context: ./user-service
       dockerfile: Dockerfile
@@ -32,6 +34,7 @@ services:
     restart: on-failure
 
   event-service:
+    image: nisulapre/event-service:latest
     build:
       context: ./event-service
       dockerfile: Dockerfile
@@ -46,6 +49,7 @@ services:
     restart: on-failure
 
   booking-service:
+    image: nisulapre/booking-service:latest
     build:
       context: ./booking-service
       dockerfile: Dockerfile
@@ -67,6 +71,7 @@ services:
     restart: on-failure
 
   payment-service:
+    image: nisulapre/payment-service:latest
     build:
       context: ./payment-service
       dockerfile: Dockerfile
@@ -86,6 +91,7 @@ services:
     restart: on-failure
 
   notification-service:
+    image: nisulapre/notification-service:latest
     build:
       context: ./notification-service
       dockerfile: Dockerfile
