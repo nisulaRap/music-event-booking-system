@@ -3,10 +3,6 @@
 .env.*
 !.env.example
 
-# Application properties with real credentials
-**/src/main/resources/application.properties
-**/src/main/resources/application-prod.properties
-
 # Build output
 **/target/
 **/node_modules/
