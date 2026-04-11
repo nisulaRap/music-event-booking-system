@@ -1,7 +1,7 @@
-version: "3.9"
-
 services:
+
   frontend:
+    image: nisulapre/frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -9,12 +9,32 @@ services:
     ports:
       - "3000:80"
     depends_on:
+      - user-service
       - event-service
+      - booking-service
+      - payment-service
+      - notification-service
     networks:
       - music-net
     restart: unless-stopped
 
+  user-service:
+    image: nisulapre/user-service:latest
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGO_URI_USER}
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - music-net
+    restart: on-failure
+
   event-service:
+    image: nisulapre/event-service:latest
     build:
       context: ./event-service
       dockerfile: Dockerfile
@@ -22,10 +42,70 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - SPRING_DATA_MONGODB_URI=${MONGO_URI}
+      - SPRING_DATA_MONGODB_URI=${MONGO_URI_EVENT}
+      - JWT_SECRET=${JWT_SECRET}
     networks:
       - music-net
-    restart: unless-stopped
+    restart: on-failure
+
+  booking-service:
+    image: nisulapre/booking-service:latest
+    build:
+      context: ./booking-service
+      dockerfile: Dockerfile
+    container_name: booking-service
+    ports:
+      - "8083:8083"
+    environment:
+      - MONGO_URI_BOOKING=${MONGO_URI_BOOKING}
+      - JWT_SECRET=${JWT_SECRET}
+      - EVENT_SERVICE_URL=http://event-service:8082
+      - USER_SERVICE_URL=http://user-service:8081
+      - PAYMENT_SERVICE_URL=http://payment-service:8084
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8085
+    depends_on:
+      - event-service
+      - user-service
+    networks:
+      - music-net
+    restart: on-failure
+
+  payment-service:
+    image: nisulapre/payment-service:latest
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "8084:8084"
+    environment:
+      - MONGO_URI_PAYMENT=${MONGO_URI_PAYMENT}
+      - JWT_SECRET=${JWT_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - BOOKING_SERVICE_URL=http://booking-service:8083
+    depends_on:
+      - booking-service
+    networks:
+      - music-net
+    restart: on-failure
+
+  notification-service:
+    image: nisulapre/notification-service:latest
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      - MONGO_URI_NOTIFICATION=${MONGO_URI_NOTIFICATION}
+      - JWT_SECRET=${JWT_SECRET}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    networks:
+      - music-net
+    restart: on-failure
 
 networks:
   music-net:

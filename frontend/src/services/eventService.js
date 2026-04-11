@@ -1,44 +1,14 @@
 import axios from 'axios'
+import { getToken } from './authService'
 
-const api = axios.create({
-  baseURL: '/api/events',
-  headers: { 'Content-Type': 'application/json' },
-})
+const api = axios.create({ baseURL: '/api/events', headers: { 'Content-Type': 'application/json' } })
+api.interceptors.request.use(cfg => { const t = getToken(); if (t) cfg.headers.Authorization = `Bearer ${t}`; return cfg })
 
 export const eventService = {
-  /** GET /api/events */
-  getAll: async () => {
-    const { data } = await api.get('')
-    return data
-  },
-
-  /** GET /api/events/:id */
-  getById: async (id) => {
-    const { data } = await api.get(`/${id}`)
-    return data
-  },
-
-  /** POST /api/events */
-  create: async (payload) => {
-    const { data } = await api.post('', payload)
-    return data
-  },
-
-  /** PUT /api/events/:id */
-  update: async (id, payload) => {
-    const { data } = await api.put(`/${id}`, payload)
-    return data
-  },
-
-  /** DELETE /api/events/:id */
-  delete: async (id) => {
-    const { data } = await api.delete(`/${id}`)
-    return data
-  },
-
-  /** PUT /api/events/:id/reduce-seats */
-  reduceSeats: async (id, seats) => {
-    const { data } = await api.put(`/${id}/reduce-seats`, seats)
-    return data
-  },
+  getAll:      ()           => api.get('').then(r => r.data),
+  getById:     (id)         => api.get(`/${id}`).then(r => r.data),
+  create:      (payload)    => api.post('', payload).then(r => r.data),
+  update:      (id, payload)=> api.put(`/${id}`, payload).then(r => r.data),
+  delete:      (id)         => api.delete(`/${id}`).then(r => r.data),
+  reduceSeats: (id, seats)  => api.put(`/${id}/reduce-seats`, seats).then(r => r.data),
 }
