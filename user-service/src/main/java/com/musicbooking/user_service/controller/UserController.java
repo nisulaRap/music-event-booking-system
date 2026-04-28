@@ -62,4 +62,6 @@ public class UserController {
         if (user == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(Map.of("email", user.getEmail() != null ? user.getEmail() : ""));
     }
+
+    //testing
 }
