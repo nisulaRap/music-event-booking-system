@@ -92,17 +92,14 @@ public class BookingService {
             throw new RuntimeException("Booking already cancelled");
         }
  
-        String previousStatus = booking.getStatus();
         booking.setStatus("CANCELLED");
         Booking cancelled = bookingRepository.save(booking);
  
-        if (!"PENDING".equals(previousStatus) || true) {
-            try {
-                restoreSeats(booking.getEventId(), booking.getSeats());
-                log.info("Seats restored: {} for eventId={}", booking.getSeats(), booking.getEventId());
-            } catch (Exception e) {
-                log.warn("Could not restore seats: {}", e.getMessage());
-            }
+        try {
+            restoreSeats(booking.getEventId(), booking.getSeats());
+            log.info("Seats restored: {} for eventId={}", booking.getSeats(), booking.getEventId());
+        } catch (Exception e) {
+            log.warn("Could not restore seats: {}", e.getMessage());
         }
  
         // Send cancellation notification

@@ -42,7 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
  
-        if (HttpMethod.PUT.matches(method) && path.endsWith("/reduce-seats")) {
+        if (HttpMethod.PUT.matches(method) &&
+                (path.endsWith("/reduce-seats") || path.endsWith("/restore-seats"))) {
             chain.doFilter(req, res);
             return;
         }
