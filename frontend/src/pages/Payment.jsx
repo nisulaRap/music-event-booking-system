@@ -74,7 +74,8 @@ export default function Payment() {
         })
         setStep('success')
       } catch {
-        setStep('success')
+        toast.error('Payment confirmation failed. Please contact support.')
+        setStep('card')
       }
     }, 2200)
   }

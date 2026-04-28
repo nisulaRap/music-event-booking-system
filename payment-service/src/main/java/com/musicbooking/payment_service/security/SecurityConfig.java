@@ -19,7 +19,7 @@ public class SecurityConfig {
  
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/payments/webhook"))
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a -> a
                 .requestMatchers(

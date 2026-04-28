@@ -19,7 +19,7 @@ public class SecurityConfig {
  
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a -> a
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()

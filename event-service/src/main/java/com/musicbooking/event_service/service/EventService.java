@@ -39,10 +39,12 @@ public class EventService {
  
     public Event updateEvent(String id, EventRequest request) {
         Event event = getEventById(id);
+        int seatDelta = request.getTotalSeats() - event.getTotalSeats();
         event.setName(request.getName());
         event.setLocation(request.getLocation());
         event.setEventDate(request.getEventDate());
         event.setTotalSeats(request.getTotalSeats());
+        event.setAvailableSeats(Math.max(0, event.getAvailableSeats() + seatDelta));
         event.setPrice(request.getPrice());
         
         return repository.save(event);
